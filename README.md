@@ -3,55 +3,26 @@
 A comprehensive full-stack platform for managing African events, from request intake to payment processing.
 
 ## Features
+A comprehensive full-stack platform for managing African events, from request intake to payment processing.
+# Boom Audio Visuals - Professional Audio-Visual Production (Kisumu, Kenya)
 
+Boom Audio Visuals provides professional audio-visual production and event services from Kisumu to all corners of Kenya. We deliver sound, lighting, staging and full production for corporate, cultural and private events.
 ### Public Website
 - Homepage with hero imagery and CTAs
 - Services showcase
-- Gallery with event portfolio
-- Blog with SEO support
-- Events & ticketing
-- Contact form
-
-### Service Management
 - Multi-step request form
 - Service selection and customization
-- Quote generation and tracking
-- Invoice management
-- Payment processing (Stripe & M-Pesa)
-
-### Admin Dashboard
 - Service request management
 - Quotation editor with line items
-- Invoice and payment tracking
-- Event management
-- Gallery uploads (Cloudinary)
-- Analytics dashboard
-- User management
-
-### Technical Stack
 - **Frontend**: Next.js 16 with React 19
 - **Styling**: Tailwind CSS v4 with custom design tokens
-- **Database**: PostgreSQL
-- **Authentication**: JWT tokens
-- **Payments**: Stripe & M-Pesa integration
-- **File Storage**: Cloudinary
-- **Email**: SendGrid / Mailgun
-- **PDF Generation**: Puppeteer
-
-## Getting Started
-
 ### Prerequisites
 - Node.js 18+
 - PostgreSQL
 - Stripe Account
-- M-Pesa Developer Account (for mobile payments)
-- Cloudinary Account
-
-### Installation
-
 1. Clone repository
 \`\`\`bash
-git clone https://github.com/zenithevents/platform.git
+git clone https://github.com/boomaudiovisuals/platform.git
 cd platform
 \`\`\`
 
@@ -71,11 +42,46 @@ cp .env.example .env.local
 npm run db:migrate
 \`\`\`
 
+Create a `.env.local` in the `server/` folder and set `MONGODB_URI`.
+
+5. Run development servers
+```
+# start backend (server/)
+cd server && npm install && npm run dev
+
+# in another terminal start frontend
+npm run dev
+```
+
 5. Run development server
 \`\`\`bash
 npm run dev
 \`\`\`
 
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+
+# M-Pesa
+MPESA_CONSUMER_KEY=...
+MPESA_CONSUMER_SECRET=...
+MPESA_SHORTCODE=...
+MPESA_PASSKEY=...
+
+# Email
+SENDGRID_API_KEY=SG...
+SENDGRID_FROM_EMAIL=boomaudiovisuals254@gmail.com
+
+# Cloudinary
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+
+# JWT
+JWT_SECRET=your_jwt_secret_key_here
+```
 Visit http://localhost:3000
 
 ### Environment Variables
@@ -96,7 +102,7 @@ MPESA_PASSKEY=...
 
 # Email
 SENDGRID_API_KEY=SG...
-SENDGRID_FROM_EMAIL=hello@zenithevents.com
+SENDGRID_FROM_EMAIL=boomaudiovisuals254@gmail.com
 
 # Cloudinary
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=...
@@ -106,16 +112,6 @@ CLOUDINARY_API_SECRET=...
 # JWT
 JWT_SECRET=your_jwt_secret_key_here
 \`\`\`
-
-## File Structure
-\`\`\`
-├── app/
-│   ├── api/                  # API routes
-│   ├── admin/               # Admin dashboard
-│   ├── request-service/     # Service request form
-│   ├── quote-status/        # Quote tracking
-│   ├── payment/             # Payment page
-│   ├── services/            # Services listing
 │   ├── gallery/             # Gallery page
 │   ├── blog/                # Blog pages
 │   ├── events/              # Events page
@@ -184,14 +180,14 @@ POST /api/quotations
     }
   ],
   "notes": "Payment due 30 days from invoice"
+For support or bookings: 
+
+- Phone: +254 742 412650
+- Email: boomaudiovisuals254@gmail.com
+- Website: https://boomaudiovisuals.co.ke
+
+We operate across Kenya — from Nairobi to coastal and Western counties; see the website for a full list of counties we serve.
 }
-\`\`\`
-
-## Deployment
-
-### Vercel (Recommended for Frontend)
-\`\`\`bash
-npm install -g vercel
 vercel
 \`\`\`
 
@@ -214,7 +210,7 @@ npm run test:integration
 MIT License - see LICENSE file for details
 
 ## Support
-For support, email support@zenithevents.com or visit zenithevents.com/help
+For support, email boomaudiovisuals254@gmail.com or visit boomaudiovisuals.co.ke/help
 
 ## Roadmap
 - [ ] WhatsApp integration for notifications
