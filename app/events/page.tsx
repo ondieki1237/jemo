@@ -3,55 +3,74 @@
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import Link from "next/link"
-import { ArrowRight, MapPin, Calendar, Users } from "lucide-react"
+import { ArrowRight, MapPin, Calendar, Users, Star } from "lucide-react"
 import Image from "next/image"
+import { useState, useEffect } from "react"
 
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Summer Music Festival 2025",
-    date: "2025-06-15",
-    location: "Nairobi National Park",
-    attendees: "5000+",
-    image: "/placeholder.svg?key=evt1",
-    description: "Three-day music festival featuring international and local artists",
-    tickets: [
-      { tier: "Early Bird", price: 3500, quantity: 1000 },
-      { tier: "Regular", price: 5000, quantity: 2000 },
-      { tier: "VIP", price: 10000, quantity: 500 },
-    ],
-  },
-  {
-    id: 2,
-    title: "Tech Africa Conference 2025",
-    date: "2025-07-22",
-    location: "Kenyatta Convention Centre",
-    attendees: "2000+",
-    image: "/placeholder.svg?key=evt2",
-    description: "Premier technology and innovation conference for African leaders",
-    tickets: [
-      { tier: "Standard", price: 2500, quantity: 1500 },
-      { tier: "Premium", price: 5000, quantity: 400 },
-      { tier: "Executive", price: 12000, quantity: 100 },
-    ],
-  },
-  {
-    id: 3,
-    title: "Art & Culture Expo",
-    date: "2025-08-10",
-    location: "Nairobi Exhibition Centre",
-    attendees: "3000+",
-    image: "/placeholder.svg?key=evt3",
-    description: "Celebration of African art, culture, and creativity",
-    tickets: [
-      { tier: "General Admission", price: 1500, quantity: 2500 },
-      { tier: "Artist Pass", price: 3000, quantity: 400 },
-      { tier: "Patron", price: 8000, quantity: 100 },
-    ],
-  },
-]
+interface Event {
+  _id: string
+  title: string
+  description: string
+  eventDate: string
+  endDate: string | null
+  location: {
+    venue: string
+    address: string
+    city: string
+  }
+  featuredImage: string
+  category: string
+  services: string[]
+  published: boolean
+  featured: boolean
+  capacity: number
+  ticketPrice: number
+  status: string
+  slug: string
+}
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState("all")
+
+  const categories = ["all", "wedding", "corporate", "concert", "conference", "party", "other"]
+
+  useEffect(() => {
+    fetchEvents()
+  }, [])
+
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch("/api/events?published=true")
+      const data = await res.json()
+      if (data.success) {
+        setEvents(data.events || [])
+      }
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching events:", error)
+      setLoading(false)
+    }
+  }
+
+  const filteredEvents =
+    selectedCategory === "all"
+      ? events
+      : events.filter((event) => event.category === selectedCategory)
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "upcoming":
+        return "bg-blue-100 text-blue-800"
+      case "ongoing":
+        return "bg-green-100 text-green-800"
+      case "completed":
+        return "bg-gray-100 text-gray-800"
+      default:
+        return "bg-gray-100 text-gray-800"
+    }
+  }
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
@@ -66,76 +85,176 @@ export default function EventsPage() {
         </div>
       </section>
 
+      {/* Category Filter */}
+      <section className="py-8 bg-background border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap gap-3">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  selectedCategory === cat
+                    ? "bg-accent text-accent-foreground"
+                    : "bg-secondary/10 text-foreground hover:bg-secondary/20"
+                }`}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Events Grid */}
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-12">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12 border-b border-border last:border-b-0"
-              >
-                {/* Image */}
-                <div className="relative h-64 lg:h-auto rounded-lg overflow-hidden luxury-border">
-                  <Image src={event.image || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
-                </div>
+          {loading ? (
+            <div className="text-center py-12">
+              <p className="text-foreground/60">Loading events...</p>
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-foreground/60">
+                {selectedCategory === "all"
+                  ? "No events available yet. Check back soon!"
+                  : `No events found in the "${selectedCategory}" category.`}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-12">
+              {filteredEvents.map((event) => (
+                <div
+                  key={event._id}
+                  className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12 border-b border-border last:border-b-0"
+                >
+                  {/* Image */}
+                  <div className="relative h-64 lg:h-auto rounded-lg overflow-hidden luxury-border">
+                    {event.featuredImage ? (
+                      <Image src={event.featuredImage} alt={event.title} fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-primary/20">
+                        <span className="text-6xl font-serif font-bold text-accent/50">B</span>
+                      </div>
+                    )}
+                    {event.featured && (
+                      <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-current" />
+                        <span className="text-xs font-semibold">Featured</span>
+                      </div>
+                    )}
+                    <div className="absolute bottom-4 left-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(event.status)}`}>
+                        {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                      </span>
+                    </div>
+                  </div>
 
-                {/* Content */}
-                <div className="lg:col-span-2 space-y-6">
-                  <div>
-                    <h3 className="text-3xl mb-4">{event.title}</h3>
-
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center space-x-3 text-foreground/70">
-                        <Calendar className="w-5 h-5 text-accent" />
-                        <span>
-                          {new Date(event.date).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
+                  {/* Content */}
+                  <div className="lg:col-span-2 space-y-6">
+                    <div>
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="text-3xl font-serif font-bold">{event.title}</h3>
+                        <span className="bg-accent/10 text-accent px-3 py-1 rounded text-sm font-medium capitalize">
+                          {event.category}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-3 text-foreground/70">
-                        <MapPin className="w-5 h-5 text-accent" />
-                        <span>{event.location}</span>
-                      </div>
-                      <div className="flex items-center space-x-3 text-foreground/70">
-                        <Users className="w-5 h-5 text-accent" />
-                        <span>{event.attendees} expected attendees</span>
-                      </div>
-                    </div>
 
-                    <p className="text-foreground/70 text-lg mb-6">{event.description}</p>
-                  </div>
-
-                  {/* Ticket Options */}
-                  <div className="bg-accent/5 p-6 rounded-lg">
-                    <h4 className="font-serif font-bold text-lg mb-4">Ticket Options</h4>
-                    <div className="space-y-3">
-                      {event.tickets.map((ticket, idx) => (
-                        <div
-                          key={idx}
-                          className="flex justify-between items-center py-2 border-b border-border/50 last:border-b-0"
-                        >
-                          <span className="text-sm text-foreground/70">{ticket.tier}</span>
-                          <span className="font-bold text-accent">KES {ticket.price.toLocaleString()}</span>
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center space-x-3 text-foreground/70">
+                          <Calendar className="w-5 h-5 text-accent" />
+                          <span>
+                            {new Date(event.eventDate).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
+                            {event.endDate && (
+                              <>
+                                {" - "}
+                                {new Date(event.endDate).toLocaleDateString("en-US", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                              </>
+                            )}
+                          </span>
                         </div>
-                      ))}
+                        {event.location.venue && (
+                          <div className="flex items-center space-x-3 text-foreground/70">
+                            <MapPin className="w-5 h-5 text-accent" />
+                            <span>
+                              {event.location.venue}
+                              {event.location.city && `, ${event.location.city}`}
+                            </span>
+                          </div>
+                        )}
+                        {event.capacity > 0 && (
+                          <div className="flex items-center space-x-3 text-foreground/70">
+                            <Users className="w-5 h-5 text-accent" />
+                            <span>Capacity: {event.capacity} attendees</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <p className="text-foreground/70 mb-6">{event.description}</p>
+
+                      {event.services && event.services.length > 0 && (
+                        <div className="mb-6">
+                          <h4 className="font-semibold mb-3">Services Provided:</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {event.services.map((service, i) => (
+                              <span
+                                key={i}
+                                className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm"
+                              >
+                                {service}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-6 border-t border-border">
+                      {event.ticketPrice > 0 ? (
+                        <div>
+                          <p className="text-sm text-foreground/60 mb-1">Starting from</p>
+                          <p className="text-2xl font-bold text-accent">KES {event.ticketPrice.toLocaleString()}</p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-2xl font-bold text-green-600">Free Event</p>
+                        </div>
+                      )}
+                      <Link href="/contact">
+                        <button className="px-6 py-3 bg-accent text-accent-foreground font-semibold rounded-lg hover:bg-accent/90 transition-all flex items-center space-x-2">
+                          <span>Inquire Now</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </button>
+                      </Link>
                     </div>
                   </div>
-
-                  <Link
-                    href="#"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-all"
-                  >
-                    Buy Tickets
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Link>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-primary text-primary-foreground">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-primary-foreground mb-4">Want to Host Your Own Event?</h2>
+          <p className="text-lg text-primary-foreground/80 mb-8">
+            Partner with Boom Audio Visuals to create an unforgettable experience for your guests.
+          </p>
+          <Link href="/contact">
+            <button className="px-8 py-4 bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-all text-lg">
+              Get Started
+            </button>
+          </Link>
         </div>
       </section>
 

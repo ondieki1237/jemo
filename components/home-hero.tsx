@@ -33,8 +33,8 @@ const OrbCanvas = () => {
     window.addEventListener("resize", resize);
 
     const orbs = [
-      { x: 0.75, y: 0.2, r: 180, hue: 200, speed: 0.8 },
-      { x: 0.25, y: 0.7, r: 150, hue: 260, speed: 1.2 },
+      { x: 0.75, y: 0.2, r: 180, hue: 210, speed: 0.8 },
+      { x: 0.25, y: 0.7, r: 150, hue: 220, speed: 1.2 },
     ];
 
     let animId: number;
@@ -128,7 +128,7 @@ export function HomeHero() {
               initial={shouldReduce ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="hero-badge w-fit flex items-center gap-2"
+              className="hero-badge w-fit flex items-center gap-2 neu-convex px-6 py-3"
             >
               <Sparkles className="w-4 h-4" />
               <span>Premium Events</span>
@@ -145,7 +145,7 @@ export function HomeHero() {
                 Unforgettable{" "}
                 <span className="inline-block">Moments,</span>
                 <br />
-                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-accent via-accent/80 to-primary">
+                <span className="text-gradient bg-clip-text text-transparent bg-gradient-to-r from-primary via-accent to-blue-500">
                   Flawlessly Executed
                 </span>
               </h1>
@@ -166,21 +166,20 @@ export function HomeHero() {
                 href="/request-service"
                 className={cn(
                   buttonVariants({ variant: "default", size: "lg" }),
-                  "group relative overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl focus-visible:ring-4 focus-visible:ring-accent/50"
+                  "group relative overflow-hidden blue-glow-strong transition-all duration-300 hover:shadow-2xl hover:scale-105 focus-visible:ring-4 focus-visible:ring-accent/50"
                 )}
               >
                 <span className="flex items-center gap-2">
                   Request a Service
                   <ArrowRight className="ml-1 w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </span>
-                <span className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
               </Link>
 
               <Link
                 href="/gallery"
                 className={cn(
                   buttonVariants({ variant: "outline", size: "lg" }),
-                  "group border-2 border-accent shadow-sm transition-all duration-300 hover:scale-[1.02] focus-visible:ring-4 focus-visible:ring-accent/50"
+                  "group neu-flat transition-all duration-300 hover:blue-glow hover:scale-[1.02] focus-visible:ring-4 focus-visible:ring-accent/50"
                 )}
               >
                 <span className="flex items-center gap-2">

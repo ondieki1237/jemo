@@ -9,6 +9,9 @@ import requestsRouter from './routes/requests.js'
 import quotationsRouter from './routes/quotations.js'
 import invoicesRouter from './routes/invoices.js'
 import paymentsRouter from './routes/payments.js'
+import blogRouter from './routes/blog.js'
+import eventsRouter from './routes/events.js'
+import uploadRouter from './routes/upload.js'
 
 dotenv.config()
 
@@ -30,6 +33,9 @@ app.use('/api/requests', requestsRouter)
 app.use('/api/quotations', quotationsRouter)
 app.use('/api/invoices', invoicesRouter)
 app.use('/api/payments', paymentsRouter)
+app.use('/api/blog', blogRouter)
+app.use('/api/events', eventsRouter)
+app.use('/api/upload', uploadRouter)
 
 const PORT = process.env.PORT || 4000
 app.listen(PORT, () => console.log(`Backend listening on http://localhost:${PORT}`))

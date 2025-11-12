@@ -42,20 +42,20 @@ export function Navigation() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={cn(
         "fixed inset-x-0 top-4 z-50 mx-auto max-w-7xl rounded-2xl px-4 transition-all duration-300",
-        "bg-background/95 backdrop-blur-xl border border-border/50",
-        scrolled
-          ? "shadow-2xl shadow-background/10 scale-[0.98]"
-          : "shadow-xl shadow-background/5"
+        "neu-flat backdrop-blur-xl",
+        scrolled && "blue-glow scale-[0.98]"
       )}
       style={{ transform: "translateZ(0)" }} // Force GPU layer
     >
       <div className="flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2" aria-label="Boom Audio Visuals Home">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg neu-convex">
             <span className="font-serif text-lg font-bold text-accent">B</span>
           </div>
-          <span className="hidden font-serif text-xl font-bold sm:inline">Boom Audio Visuals</span>
+          <span className="hidden font-serif text-xl font-bold sm:inline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Boom Audio Visuals
+          </span>
         </Link>
 
         {/* Desktop Links */}
@@ -79,7 +79,7 @@ export function Navigation() {
         <div className="hidden md:block">
           <Link
             href="/request-service"
-            className="rounded-lg bg-accent px-5 py-2.5 font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="neu-button px-5 py-2.5 font-medium text-accent hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
           >
             Request Service
           </Link>

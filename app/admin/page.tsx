@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { BarChart3, FileText, DollarSign, Users, TrendingUp, Settings, LogOut, Menu, X } from "lucide-react"
+import { useAuth } from "@/components/admin-auth-guard"
 
 interface DashboardStats {
   totalRequests: number
@@ -13,24 +14,71 @@ interface DashboardStats {
   conversionRate: number
 }
 
-const mockStats: DashboardStats = {
-  totalRequests: 48,
-  totalQuotes: 42,
-  totalInvoicesPaid: 38,
-  activeTicketSales: 2150,
-  monthlyRevenue: 5420000,
-  conversionRate: 87.5,
+interface Request {
+  _id: string
+  firstName: string
+  lastName: string
+  selectedServices: string[]
+  createdAt: string
+  status: string
 }
-
-const recentRequests = [
-  { id: "R-001", client: "Jane Smith", services: "Event Planning, Sound", date: "2025-01-18", status: "pending" },
-  { id: "R-002", client: "Tech Corp", services: "LED Screens", date: "2025-01-17", status: "quoted" },
-  { id: "R-003", client: "Wedding Co", services: "Full Package", date: "2025-01-16", status: "approved" },
-  { id: "R-004", client: "Music Festival", services: "Sound, Lighting", date: "2025-01-15", status: "invoiced" },
-]
 
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [stats, setStats] = useState<DashboardStats>({
+    totalRequests: 0,
+    totalQuotes: 0,
+    totalInvoicesPaid: 0,
+    activeTicketSales: 0,
+    monthlyRevenue: 0,
+    conversionRate: 0,
+  })
+  const [recentRequests, setRecentRequests] = useState<Request[]>([])
+  const [loading, setLoading] = useState(true)
+  const { logout } = useAuth()
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch requests
+      const requestsRes = await fetch("/api/requests")
+      const requestsData = await requestsRes.json()
+      const requests = requestsData.requests || []
+
+      // Fetch quotations
+      const quotesRes = await fetch("/api/quotations")
+      const quotesData = await quotesRes.json()
+      const quotes = quotesData.quotations || []
+
+      // Fetch invoices
+      const invoicesRes = await fetch("/api/invoices")
+      const invoicesData = await invoicesRes.json()
+      const invoices = invoicesData.invoices || []
+
+      // Calculate stats
+      const paidInvoices = invoices.filter((inv: any) => inv.paymentStatus === "paid")
+      const totalRevenue = paidInvoices.reduce((sum: number, inv: any) => sum + (inv.amount || 0), 0)
+
+      setStats({
+        totalRequests: requests.length,
+        totalQuotes: quotes.length,
+        totalInvoicesPaid: paidInvoices.length,
+        activeTicketSales: 0,
+        monthlyRevenue: totalRevenue,
+        conversionRate: requests.length > 0 ? (quotes.length / requests.length) * 100 : 0,
+      })
+
+      // Get recent requests (last 5)
+      setRecentRequests(requests.slice(0, 5))
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error)
+      setLoading(false)
+    }
+  }
 
   const menuItems = [
     { icon: BarChart3, label: "Dashboard", href: "/admin" },
@@ -72,7 +120,10 @@ export default function AdminDashboard() {
         </nav>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-primary-foreground/10">
-          <button className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg hover:bg-primary-foreground/10 transition-colors">
+          <button
+            onClick={logout}
+            className="flex items-center space-x-3 w-full px-4 py-3 rounded-lg hover:bg-primary-foreground/10 transition-colors"
+          >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Logout</span>
           </button>
@@ -117,32 +168,32 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
             <div className="bg-card border border-border p-6 rounded-lg">
               <p className="text-sm text-foreground/60 mb-2">Total Requests</p>
-              <p className="text-3xl font-bold text-accent">{mockStats.totalRequests}</p>
-              <p className="text-xs text-foreground/50 mt-2">This month</p>
+              <p className="text-3xl font-bold text-accent">{stats.totalRequests}</p>
+              <p className="text-xs text-foreground/50 mt-2">All time</p>
             </div>
 
             <div className="bg-card border border-border p-6 rounded-lg">
               <p className="text-sm text-foreground/60 mb-2">Quotes Issued</p>
-              <p className="text-3xl font-bold text-accent">{mockStats.totalQuotes}</p>
-              <p className="text-xs text-foreground/50 mt-2">{mockStats.conversionRate}% conversion</p>
+              <p className="text-3xl font-bold text-accent">{stats.totalQuotes}</p>
+              <p className="text-xs text-foreground/50 mt-2">{stats.conversionRate.toFixed(1)}% conversion</p>
             </div>
 
             <div className="bg-card border border-border p-6 rounded-lg">
               <p className="text-sm text-foreground/60 mb-2">Invoices Paid</p>
-              <p className="text-3xl font-bold text-accent">{mockStats.totalInvoicesPaid}</p>
-              <p className="text-xs text-foreground/50 mt-2">This month</p>
+              <p className="text-3xl font-bold text-accent">{stats.totalInvoicesPaid}</p>
+              <p className="text-xs text-foreground/50 mt-2">Completed</p>
             </div>
 
             <div className="bg-card border border-border p-6 rounded-lg">
               <p className="text-sm text-foreground/60 mb-2">Tickets Sold</p>
-              <p className="text-3xl font-bold text-accent">{mockStats.activeTicketSales.toLocaleString()}</p>
-              <p className="text-xs text-foreground/50 mt-2">Active events</p>
+              <p className="text-3xl font-bold text-accent">{stats.activeTicketSales.toLocaleString()}</p>
+              <p className="text-xs text-foreground/50 mt-2">Coming soon</p>
             </div>
 
             <div className="bg-card border border-border p-6 rounded-lg md:col-span-2 lg:col-span-1">
-              <p className="text-sm text-foreground/60 mb-2">Monthly Revenue</p>
-              <p className="text-2xl font-bold text-accent">KES {(mockStats.monthlyRevenue / 1000000).toFixed(1)}M</p>
-              <p className="text-xs text-foreground/50 mt-2">+12% vs last month</p>
+              <p className="text-sm text-foreground/60 mb-2">Total Revenue</p>
+              <p className="text-2xl font-bold text-accent">KES {(stats.monthlyRevenue / 1000).toFixed(0)}K</p>
+              <p className="text-xs text-foreground/50 mt-2">From paid invoices</p>
             </div>
           </div>
 
@@ -172,37 +223,60 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentRequests.map((request) => {
-                    const statusColors = {
-                      pending: "bg-yellow-100 text-yellow-800",
-                      quoted: "bg-blue-100 text-blue-800",
-                      approved: "bg-green-100 text-green-800",
-                      invoiced: "bg-purple-100 text-purple-800",
-                    }
-                    return (
-                      <tr key={request.id} className="border-b border-border hover:bg-secondary/5 transition-colors">
-                        <td className="px-6 py-4 font-semibold text-accent">{request.id}</td>
-                        <td className="px-6 py-4 text-foreground">{request.client}</td>
-                        <td className="px-6 py-4 text-sm text-foreground/70">{request.services}</td>
-                        <td className="px-6 py-4 text-sm text-foreground/70">{request.date}</td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColors[request.status as keyof typeof statusColors]}`}
-                          >
-                            {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <Link
-                            href={`/admin/requests/${request.id}`}
-                            className="text-accent hover:text-accent/80 text-sm font-semibold"
-                          >
-                            View
-                          </Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
+                  {loading ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-12 text-center text-foreground/60">
+                        Loading requests...
+                      </td>
+                    </tr>
+                  ) : recentRequests.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-12 text-center text-foreground/60">
+                        No requests yet
+                      </td>
+                    </tr>
+                  ) : (
+                    recentRequests.map((request) => {
+                      const statusColors = {
+                        pending: "bg-yellow-100 text-yellow-800",
+                        quoted: "bg-blue-100 text-blue-800",
+                        approved: "bg-green-100 text-green-800",
+                        invoiced: "bg-purple-100 text-purple-800",
+                      }
+                      return (
+                        <tr key={request._id} className="border-b border-border hover:bg-secondary/5 transition-colors">
+                          <td className="px-6 py-4 font-semibold text-accent">{request._id.slice(-8)}</td>
+                          <td className="px-6 py-4 text-foreground">
+                            {request.firstName} {request.lastName}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground/70">
+                            {request.selectedServices.slice(0, 2).join(", ")}
+                            {request.selectedServices.length > 2 && ` +${request.selectedServices.length - 2}`}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-foreground/70">
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span
+                              className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                                statusColors[request.status as keyof typeof statusColors] || statusColors.pending
+                              }`}
+                            >
+                              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            <Link
+                              href={`/admin/requests`}
+                              className="text-accent hover:text-accent/80 text-sm font-semibold"
+                            >
+                              View
+                            </Link>
+                          </td>
+                        </tr>
+                      )
+                    })
+                  )}
                 </tbody>
               </table>
             </div>

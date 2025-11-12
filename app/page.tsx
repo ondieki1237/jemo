@@ -58,11 +58,11 @@ export default function HomePage() {
             {featuredServices.map((service) => (
               <Link key={service.id} href={service.href}>
                 <div
-                  className="cursor-pointer space-y-4 transform transition-all duration-400 hover:-translate-y-2 hover:shadow-xl rounded-lg"
+                  className="cursor-pointer space-y-4 transform transition-all duration-400 neu-card p-6"
                   onMouseEnter={() => setHoveredService(service.id)}
                   onMouseLeave={() => setHoveredService(null)}
                 >
-                  <div className="relative h-64 rounded-lg overflow-hidden luxury-border bg-secondary/5">
+                  <div className="relative h-64 rounded-lg overflow-hidden neu-pressed bg-secondary/5">
                     <Image
                       src={service.image || "/placeholder.svg"}
                       alt={service.title}
@@ -71,8 +71,8 @@ export default function HomePage() {
                         hoveredService === service.id ? "scale-105 rotate-0" : "scale-100"
                       }`}
                     />
-                    {/* subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-60 mix-blend-multiply" />
+                    {/* subtle gradient overlay with blue tint */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent opacity-60 mix-blend-multiply" />
                   </div>
                   <h3
                     className={cn(
@@ -109,19 +109,20 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl" />
+      <section className="py-20 bg-gradient-to-br from-primary via-accent to-blue-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-400 rounded-full blur-3xl" />
         </div>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h2 className="text-primary-foreground mb-6">Ready to Create Something Extraordinary?</h2>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-white mb-6">Ready to Create Something Extraordinary?</h2>
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
             Let's discuss your event vision and create an unforgettable experience for your guests.
           </p>
           <Link
             href="/request-service"
-            className="inline-flex items-center justify-center px-8 py-4 bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-all"
+            className="inline-flex items-center justify-center px-8 py-4 neu-button bg-white text-primary font-semibold hover:scale-105 transition-all"
           >
             Get Started Today
             <ArrowRight className="ml-2 w-5 h-5" />

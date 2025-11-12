@@ -1,61 +1,46 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
+import { useState, useEffect } from "react"
 import { Search, Filter, Download } from "lucide-react"
+import { AdminLayoutWrapper } from "@/components/admin-layout-wrapper"
 
 interface Invoice {
-  id: string
-  quoteId: string
-  clientName: string
+  _id: string
+  quotationId: string
   amount: number
-  dueDate: string
-  status: "pending" | "paid" | "overdue"
+  dueDate?: string
+  paymentStatus: string
+  paymentMethod?: string
   createdAt: string
-  paymentMethod?: "stripe" | "mpesa" | "none"
 }
 
-const mockInvoices: Invoice[] = [
-  {
-    id: "INV-001-2025",
-    quoteId: "Q-001-2025",
-    clientName: "Jane Smith",
-    amount: 58000,
-    dueDate: "2025-02-10",
-    status: "pending",
-    createdAt: "2025-01-10",
-  },
-  {
-    id: "INV-002-2025",
-    quoteId: "Q-002-2025",
-    clientName: "Tech Africa Corp",
-    amount: 87000,
-    dueDate: "2025-02-12",
-    status: "paid",
-    createdAt: "2025-01-12",
-    paymentMethod: "stripe",
-  },
-  {
-    id: "INV-003-2025",
-    quoteId: "Q-003-2025",
-    clientName: "Wedding Celebrations",
-    amount: 45000,
-    dueDate: "2025-01-15",
-    status: "overdue",
-    createdAt: "2024-12-15",
-  },
-]
-
 export default function AdminInvoices() {
-  const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices)
+  const [invoices, setInvoices] = useState<Invoice[]>([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchInvoices()
+  }, [])
+
+  const fetchInvoices = async () => {
+    try {
+      const res = await fetch("/api/invoices")
+      const data = await res.json()
+      setInvoices(data.invoices || [])
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching invoices:", error)
+      setLoading(false)
+    }
+  }
 
   const filtered = invoices.filter((inv) => {
-    const matchesStatus = filterStatus === "all" || inv.status === filterStatus
+    const matchesStatus = filterStatus === "all" || inv.paymentStatus === filterStatus
     const matchesSearch =
-      inv.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inv.id.toLowerCase().includes(searchTerm.toLowerCase())
+      inv._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      inv.quotationId.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesStatus && matchesSearch
   })
 
@@ -65,33 +50,19 @@ export default function AdminInvoices() {
     overdue: "bg-red-100 text-red-800",
   }
 
-  const totalPending = invoices.filter((i) => i.status === "pending").reduce((sum, i) => sum + i.amount, 0)
-  const totalPaid = invoices.filter((i) => i.status === "paid").reduce((sum, i) => sum + i.amount, 0)
+  const totalPending = invoices.filter((i) => i.paymentStatus === "pending").reduce((sum, i) => sum + i.amount, 0)
+  const totalPaid = invoices.filter((i) => i.paymentStatus === "paid").reduce((sum, i) => sum + i.amount, 0)
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <AdminLayoutWrapper title="Invoices & Payments" description="Manage invoices and payment tracking">
       <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-serif text-3xl font-bold">Invoices & Payments</h1>
-            <p className="text-foreground/60 mt-1">Manage invoices and payment tracking</p>
-          </div>
-          <Link
-            href="/admin/invoices/new"
-            className="px-6 py-3 bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-colors"
-          >
-            New Invoice
-          </Link>
-        </div>
-
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-card border border-border p-6 rounded-lg">
             <p className="text-sm text-foreground/60 mb-2">Total Pending</p>
             <p className="text-3xl font-bold text-yellow-600">KES {totalPending.toLocaleString()}</p>
             <p className="text-xs text-foreground/50 mt-2">
-              {invoices.filter((i) => i.status === "pending").length} invoices
+              {invoices.filter((i) => i.paymentStatus === "pending").length} invoices
             </p>
           </div>
 
@@ -99,22 +70,16 @@ export default function AdminInvoices() {
             <p className="text-sm text-foreground/60 mb-2">Total Paid</p>
             <p className="text-3xl font-bold text-green-600">KES {totalPaid.toLocaleString()}</p>
             <p className="text-xs text-foreground/50 mt-2">
-              {invoices.filter((i) => i.status === "paid").length} invoices
+              {invoices.filter((i) => i.paymentStatus === "paid").length} invoices
             </p>
           </div>
 
           <div className="bg-card border border-border p-6 rounded-lg">
-            <p className="text-sm text-foreground/60 mb-2">Overdue</p>
-            <p className="text-3xl font-bold text-red-600">
-              KES{" "}
-              {invoices
-                .filter((i) => i.status === "overdue")
-                .reduce((sum, i) => sum + i.amount, 0)
-                .toLocaleString()}
+            <p className="text-sm text-foreground/60 mb-2">Total Revenue</p>
+            <p className="text-3xl font-bold text-accent">
+              KES {(totalPending + totalPaid).toLocaleString()}
             </p>
-            <p className="text-xs text-foreground/50 mt-2">
-              {invoices.filter((i) => i.status === "overdue").length} invoices
-            </p>
+            <p className="text-xs text-foreground/50 mt-2">All time</p>
           </div>
         </div>
 
@@ -125,7 +90,7 @@ export default function AdminInvoices() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground/40" />
               <input
                 type="text"
-                placeholder="Search by name or invoice ID..."
+                placeholder="Search by invoice or quotation ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
@@ -142,7 +107,6 @@ export default function AdminInvoices() {
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
                 <option value="paid">Paid</option>
-                <option value="overdue">Overdue</option>
               </select>
             </div>
 
@@ -160,54 +124,80 @@ export default function AdminInvoices() {
               <thead className="bg-secondary/5 border-b border-border">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Invoice ID</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Client</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">
+                    Quotation ID
+                  </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Amount</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Due Date</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Payment</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-foreground/60 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((invoice) => (
-                  <tr key={invoice.id} className="border-b border-border hover:bg-secondary/5 transition-colors">
-                    <td className="px-6 py-4 font-semibold text-accent">{invoice.id}</td>
-                    <td className="px-6 py-4">{invoice.clientName}</td>
-                    <td className="px-6 py-4 font-bold">KES {invoice.amount.toLocaleString()}</td>
-                    <td className="px-6 py-4 text-sm">{new Date(invoice.dueDate).toLocaleDateString()}</td>
-                    <td className="px-6 py-4">
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusColors[invoice.status]}`}>
-                        {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 space-x-2">
-                      <Link
-                        href={`/admin/invoices/${invoice.id}`}
-                        className="text-accent hover:text-accent/80 text-sm font-semibold"
-                      >
-                        View
-                      </Link>
-                      {invoice.status === "pending" && (
-                        <>
-                          <span className="text-foreground/30">•</span>
-                          <button className="text-accent hover:text-accent/80 text-sm font-semibold">
-                            Send Reminder
-                          </button>
-                        </>
-                      )}
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-foreground/60">
+                      Loading invoices...
                     </td>
                   </tr>
-                ))}
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-6 py-12 text-center text-foreground/60">
+                      No invoices found
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((invoice) => (
+                    <tr key={invoice._id} className="border-b border-border hover:bg-secondary/5 transition-colors">
+                      <td className="px-6 py-4 font-semibold text-accent">{invoice._id.slice(-8)}</td>
+                      <td className="px-6 py-4 text-sm font-mono">{invoice.quotationId.slice(-8)}</td>
+                      <td className="px-6 py-4 font-bold">KES {invoice.amount.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`text-xs font-semibold px-3 py-1 rounded-full ${
+                            statusColors[invoice.paymentStatus as keyof typeof statusColors] || statusColors.pending
+                          }`}
+                        >
+                          {invoice.paymentStatus.charAt(0).toUpperCase() + invoice.paymentStatus.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        {invoice.paymentMethod ? (
+                          <span className="bg-accent/10 text-accent px-2 py-1 rounded text-xs">
+                            {invoice.paymentMethod}
+                          </span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="px-6 py-4 space-x-2">
+                        <button
+                          onClick={() => alert(`Invoice details:\n${JSON.stringify(invoice, null, 2)}`)}
+                          className="text-accent hover:text-accent/80 text-sm font-semibold"
+                        >
+                          View
+                        </button>
+                        {invoice.paymentStatus === "pending" && (
+                          <>
+                            <span className="text-foreground/30">•</span>
+                            <button className="text-accent hover:text-accent/80 text-sm font-semibold">
+                              Send Reminder
+                            </button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
-
-          {filtered.length === 0 && (
-            <div className="p-12 text-center">
-              <p className="text-foreground/60">No invoices found</p>
-            </div>
-          )}
         </div>
       </div>
-    </div>
+    </AdminLayoutWrapper>
   )
 }

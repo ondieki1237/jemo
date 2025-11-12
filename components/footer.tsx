@@ -4,17 +4,17 @@ import { Mail, Phone, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-secondary text-secondary-foreground border-t border-border">
+    <footer className="neu-flat text-foreground border-t border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         {/* Mobile: 2-column grid | Desktop: 4-column */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-12">
           {/* Brand Column */}
           <div className="space-y-4 sm:col-span-2 md:col-span-1">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 bg-accent/20 rounded-lg flex items-center justify-center">
+              <div className="w-9 h-9 neu-convex rounded-lg flex items-center justify-center">
                 <span className="font-serif text-lg font-bold text-accent">B</span>
               </div>
-              <span className="font-serif text-lg font-bold">Boom Audio Visuals</span>
+              <span className="font-serif text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Boom Audio Visuals</span>
             </div>
             <p className="text-sm text-muted-foreground max-w-xs">
               Professional audio-visual production based in Kisumu — serving all Kenyan counties.

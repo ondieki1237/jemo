@@ -1,5 +1,7 @@
 import express from 'express'
 import Quotation from '../models/Quotation.js'
+import ServiceRequest from '../models/ServiceRequest.js'
+import { sendQuotationEmail } from '../utils/emailService.js'
 
 const router = express.Router()
 
@@ -18,7 +20,28 @@ router.post('/', async (req, res) => {
 
     const doc = await Quotation.create({ ...body, subtotal, tax, total })
 
-    return res.status(201).json({ success: true, quotationId: doc._id, subtotal, tax, total })
+    // Get client details from service request
+    try {
+      const request = await ServiceRequest.findById(body.requestId)
+      if (request && request.email) {
+        const clientName = `${request.firstName} ${request.lastName}`
+        // Send quotation email to client (non-blocking)
+        sendQuotationEmail(doc, request.email, clientName).catch(err =>
+          console.error('Failed to send quotation email:', err)
+        )
+      }
+    } catch (emailErr) {
+      console.error('Error fetching request for email:', emailErr)
+    }
+
+    return res.status(201).json({ 
+      success: true, 
+      quotationId: doc._id, 
+      subtotal, 
+      tax, 
+      total,
+      message: 'Quotation created and sent to client email'
+    })
   } catch (err) {
     console.error('Error creating quotation:', err)
     return res.status(500).json({ error: 'Internal server error' })
