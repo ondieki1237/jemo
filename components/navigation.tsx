@@ -32,7 +32,8 @@ export function Navigation() {
   const linkClasses = (href: string) =>
     cn(
       "relative text-sm font-medium transition-colors duration-200",
-      pathname === href ? "text-accent" : "text-foreground hover:text-accent"
+      // active link stays yellow; normal links keep foreground color (no color-on-hover)
+      pathname === href ? "text-[var(--yellow)]" : "text-foreground"
     );
 
   return (
@@ -42,16 +43,18 @@ export function Navigation() {
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={cn(
         "fixed inset-x-0 top-4 z-50 mx-auto max-w-7xl rounded-2xl px-4 transition-all duration-300",
-        "neu-flat backdrop-blur-xl",
-        scrolled && "blue-glow scale-[0.98]"
+        "backdrop-blur-xl bg-background/95",
+        scrolled ? "border border-[var(--primary)]/10" : ""
       )}
       style={{ transform: "translateZ(0)" }} // Force GPU layer
     >
       <div className="flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2" aria-label="Boom Audio Visuals Home">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg neu-convex">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg neu-convex relative">
             <span className="font-serif text-lg font-bold text-accent">B</span>
+            {/* subtle yellow accent dot */}
+            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--yellow)] border border-white/10 hidden sm:block" aria-hidden="true" />
           </div>
           <span className="hidden font-serif text-xl font-bold sm:inline bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Boom Audio Visuals
@@ -61,12 +64,12 @@ export function Navigation() {
         {/* Desktop Links */}
         <div className="hidden items-center space-x-8 md:flex">
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={linkClasses(link.href)}>
+            <Link key={link.href} href={link.href} className={cn(linkClasses(link.href), "nav-hover-stroke")}>
               {link.label}
               {pathname === link.href && (
                 <motion.span
                   layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 h-0.5 w-full bg-accent"
+                  className="absolute -bottom-1 left-0 h-0.5 w-full bg-[var(--yellow)]"
                   initial={false}
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />

@@ -45,6 +45,9 @@
   /* Neumorphism shadows */
   --neu-shadow-light: #ffffff;
   --neu-shadow-dark: #b8c4d0;
+  /* Subtle yellow accents (unsaturated) */
+  --yellow: #f3d36b; /* soft yellow */
+  --yellow-muted: rgba(243, 211, 107, 0.10);
 }
 
 .dark {
@@ -87,6 +90,9 @@
   /* Neumorphism shadows for dark mode */
   --neu-shadow-light: #252b3d;
   --neu-shadow-dark: #0f1419;
+  /* Subtle yellow accents for dark mode */
+  --yellow: #f6e58d;
+  --yellow-muted: rgba(246, 229, 141, 0.08);
 }
 
 @theme inline {
@@ -255,6 +261,126 @@
 
 .blue-glow-strong {
   box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);
+}
+
+/* Subtle yellow utilities */
+.yellow-highlight {
+  background: linear-gradient(90deg, var(--yellow-muted), transparent);
+}
+
+.yellow-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--yellow);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.yellow-glow {
+  box-shadow: 0 0 18px rgba(243, 211, 107, 0.12);
+}
+
+/* Additional yellow utilities (for subtle accents across the site) */
+.text-yellow {
+  color: var(--yellow);
+}
+
+.bg-yellow-muted {
+  background-color: var(--yellow-muted);
+}
+
+.border-yellow {
+  border-color: var(--yellow);
+}
+
+.yellow-underline {
+  display: inline-block;
+  position: relative;
+}
+.yellow-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(243,211,107,0.35), rgba(243,211,107,0.08));
+  border-radius: 4px;
+}
+
+.yellow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(180deg, rgba(243,211,107,0.12), rgba(243,211,107,0.06));
+  color: var(--yellow);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+}
+
+.yellow-small-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--yellow);
+  box-shadow: 0 4px 10px rgba(243,211,107,0.08);
+}
+
+/* Hero top background image used on several pages */
+.hero-top-bg {
+  background-image: url('/Boom_top_background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.hero-top-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* subtle overlay to improve text readability */
+  background: rgba(0, 0, 0, 0.18);
+  z-index: 0;
+}
+
+.hero-top-bg > .hero-inner {
+  position: relative;
+  z-index: 10;
+}
+
+/* Nav link stroke on scroll: show a thin blue stroke under links when nav has .scrolled and on hover (desktop only) */
+@media (min-width: 768px) {
+  .nav-hover-stroke {
+    position: relative;
+  }
+
+  .scrolled .nav-hover-stroke::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease, opacity 200ms ease;
+    opacity: 0;
+  }
+
+  .scrolled .nav-hover-stroke:hover::after {
+    transform: scaleX(1);
+    opacity: 0.95;
+  }
+
+  /* Make nav link text turn blue on hover for better affordance */
+  .nav-hover-stroke:hover,
+  .nav-hover-stroke:focus {
+    color: var(--primary);
+  }
 }
 
 /* Add hero section animations */

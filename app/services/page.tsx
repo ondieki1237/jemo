@@ -138,8 +138,8 @@ export default function ServicesPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-secondary text-secondary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-16 hero-top-bg text-secondary-foreground">
+        <div className="hero-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
             <h1 className="text-secondary-foreground mb-6">Our Services</h1>
             <p className="text-xl text-secondary-foreground/80">

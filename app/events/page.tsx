@@ -76,8 +76,8 @@ export default function EventsPage() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-secondary text-secondary-foreground">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-32 pb-16 hero-top-bg text-secondary-foreground">
+        <div className="hero-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-secondary-foreground mb-6">Upcoming Events</h1>
           <p className="text-xl text-secondary-foreground/80 max-w-2xl">
             Join us for unforgettable experiences curated by Africa's leading event production company.

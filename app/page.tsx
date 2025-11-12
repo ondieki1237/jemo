@@ -76,10 +76,11 @@ export default function HomePage() {
                   </div>
                   <h3
                     className={cn(
-                      "text-2xl transition-colors",
+                      "text-2xl transition-colors flex items-center",
                       hoveredService === service.id ? "text-accent" : "text-foreground"
                     )}
                   >
+                    <span className="inline-block w-2 h-2 rounded-full bg-[var(--yellow)] mr-3" aria-hidden="true" />
                     {service.title}
                   </h3>
                   <p className="text-foreground/60">{service.description}</p>

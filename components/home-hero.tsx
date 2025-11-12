@@ -130,7 +130,7 @@ export function HomeHero() {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="hero-badge w-fit flex items-center gap-2 neu-convex px-6 py-3"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 text-[var(--yellow)]" />
               <span>Premium Events</span>
             </motion.div>
 
@@ -166,12 +166,13 @@ export function HomeHero() {
                 href="/request-service"
                 className={cn(
                   buttonVariants({ variant: "default", size: "lg" }),
-                  "group relative overflow-hidden blue-glow-strong transition-all duration-300 hover:shadow-2xl hover:scale-105 focus-visible:ring-4 focus-visible:ring-accent/50"
+                  "group relative overflow-hidden blue-glow-strong transition-all duration-300 shadow-2xl scale-105 focus-visible:ring-4 focus-visible:ring-accent/50"
                 )}
               >
-                <span className="flex items-center gap-2">
-                  Request a Service
-                  <ArrowRight className="ml-1 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                <span className="flex items-center gap-3">
+                  <span className="inline-block w-2 h-2 rounded-full bg-[var(--yellow)] shadow-sm" aria-hidden="true" />
+                  <span>Request a Service</span>
+                  <ArrowRight className="ml-1 w-5 h-5 transition-transform translate-x-1" />
                 </span>
               </Link>
 

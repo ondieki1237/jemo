@@ -27,7 +27,7 @@ export function Footer() {
                 href="https://codewithseth.co.ke"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-accent transition-colors"
+                className="flex items-center gap-1 hover:text-[var(--yellow)] transition-colors"
               >
                 <Image
                   src="/seth.png"
@@ -37,6 +37,7 @@ export function Footer() {
                   className="rounded-sm"
                 />
                 <span className="font-medium">codewithseth.co.ke</span>
+                <span className="ml-1 inline-block w-2 h-2 rounded-full bg-[var(--yellow)]" aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -145,7 +146,7 @@ export function Footer() {
                 href="https://www.codewithseth.co.ke"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-accent transition-colors"
+                className="flex items-center gap-1 hover:text-[var(--yellow)] transition-colors"
               >
                 <Image
                   src="/seth.png"
@@ -155,6 +156,7 @@ export function Footer() {
                   className="rounded-sm"
                 />
                 <span className="font-medium">codewithseth.co.ke</span>
+                <span className="ml-1 inline-block w-2 h-2 rounded-full bg-[var(--yellow)]" aria-hidden="true" />
               </Link>
             </div>
           </div>
