@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000'
+const BACKEND_URL = process.env.BACKEND_URL || 'https://jemo.codewithseth.co.ke'
 
 export async function GET(request: Request) {
   try {

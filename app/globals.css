@@ -246,6 +246,20 @@
     inset -4px -4px 8px var(--neu-shadow-light);
 }
 
+/* Variant to remove the bright (light) highlight for buttons that need a subtler look */
+.neu-button.no-light {
+  /* only keep the darker inset/outer shadow */
+  box-shadow: 6px 6px 12px var(--neu-shadow-dark);
+}
+
+.neu-button.no-light:hover {
+  box-shadow: 4px 4px 8px var(--neu-shadow-dark);
+}
+
+.neu-button.no-light:active {
+  box-shadow: inset 4px 4px 8px var(--neu-shadow-dark);
+}
+
 .neu-input {
   background: var(--input);
   box-shadow: 
@@ -330,10 +344,17 @@
 /* Hero top background image used on several pages */
 .hero-top-bg {
   background-image: url('/Boom_top_background.png');
-  background-size: cover;
-  background-position: center;
+  /* Force the hero area to match the 1920x300 asset size while remaining responsive.
+     - On wide screens use the exact pixel dimensions for crisp rendering.
+     - On narrow screens keep height at 300px and crop the sides. */
+  background-size: 1920px 300px;
+  background-position: center top;
   background-repeat: no-repeat;
   position: relative;
+  height: 300px; /* exact visual height requested */
+  min-height: 300px;
+  padding-top: 0 !important; /* override utility paddings so the area stays 300px */
+  padding-bottom: 0 !important;
 }
 
 .hero-top-bg::after {
@@ -348,6 +369,20 @@
 .hero-top-bg > .hero-inner {
   position: relative;
   z-index: 10;
+  height: 100%;
+  display: flex;
+  align-items: center; /* vertically center hero content inside the 300px area */
+  justify-content: flex-start;
+  padding-top: 0; /* ensure no extra vertical spacing */
+  padding-bottom: 0;
+}
+
+/* Responsive: on phones crop the image centrally instead of compressing */
+@media (max-width: 768px) {
+  .hero-top-bg {
+    background-size: auto 300px;
+    background-position: center center;
+  }
 }
 
 /* Nav link stroke on scroll: show a thin blue stroke under links when nav has .scrolled and on hover (desktop only) */

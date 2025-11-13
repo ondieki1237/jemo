@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:4000"
+const BACKEND_URL = process.env.BACKEND_URL || "https://jemo.codewithseth.co.ke"
 
 export default async function BlogPostPage(props: { params: { slug: string } } | { params: Promise<{ slug: string }> }) {
   // In Next's app router params can be a Promise in some runtime configs — await it to be safe

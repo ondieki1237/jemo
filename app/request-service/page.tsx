@@ -30,7 +30,6 @@ export default function RequestServicePage() {
     eventTime: "",
     venue: "",
     city: "",
-    country: "",
     attendees: "",
     selectedServices: [] as string[],
     eventDescription: "",
@@ -67,9 +66,61 @@ export default function RequestServicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    // TODO: Submit to API endpoint
-    alert("Request submitted! We will contact you within 24 hours.")
+    
+    try {
+      const response = await fetch('/api/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          eventDate: formData.eventDate,
+          eventTime: formData.eventTime,
+          venue: formData.venue,
+          city: formData.city,
+          attendees: parseInt(formData.attendees),
+          selectedServices: formData.selectedServices,
+          eventDescription: formData.eventDescription,
+          specialRequirements: formData.specialRequirements,
+          budget: formData.budget,
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (response.ok && data.success) {
+        alert("Request submitted successfully! We will contact you within 24 hours.")
+        // Reset form
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          company: "",
+          eventDate: "",
+          eventTime: "",
+          venue: "",
+          city: "",
+          attendees: "",
+          selectedServices: [],
+          eventDescription: "",
+          specialRequirements: "",
+          budget: "",
+          attachments: [],
+        })
+        setStep(1)
+      } else {
+        alert(data.message || "Failed to submit request. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error submitting request:", error)
+      alert("An error occurred. Please try again.")
+    }
   }
 
   return (
@@ -226,31 +277,17 @@ export default function RequestServicePage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium">City *</label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
-                      placeholder="City"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium">Country *</label>
-                    <input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
-                      placeholder="Country"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">City *</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-3 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
+                    placeholder="City"
+                  />
                 </div>
 
                 <div className="space-y-2">
