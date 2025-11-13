@@ -6,10 +6,17 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const query = searchParams.toString()
-    
+    // If caller provided a `slug` query param, forward to the backend single-post route
+    if (searchParams.has('slug')) {
+      const slug = searchParams.get('slug')
+      const res = await fetch(`${BACKEND_URL}/api/blog/${encodeURIComponent(slug || '')}`)
+      const data = await res.json()
+      return NextResponse.json(data, { status: res.status })
+    }
+
     const res = await fetch(`${BACKEND_URL}/api/blog${query ? `?${query}` : ''}`)
     const data = await res.json()
-    
+
     return NextResponse.json(data)
   } catch (error) {
     console.error('Error fetching blog posts:', error)

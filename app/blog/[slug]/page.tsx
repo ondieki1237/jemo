@@ -17,8 +17,8 @@ export default async function BlogPostPage(props: { params: { slug: string } } |
   const { slug } = (await params) as { slug: string }
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/blog/${encodeURIComponent(slug)}`)
-    // If backend returns 404, show Next's notFound
+    // Fetch via the frontend proxy so we stay same-origin and can leverage Next caching
+    const res = await fetch(`/api/blog?slug=${encodeURIComponent(slug)}`, { next: { revalidate: 60 } })
     if (res.status === 404) return notFound()
 
     const data = await res.json()

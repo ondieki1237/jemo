@@ -31,19 +31,32 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Load Google Fonts via stylesheet to avoid Turbopack font-loader resolution issues */}
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-        />
+        {/* Preconnect + non-blocking font load for Google Fonts to reduce render blocking */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        {/* Use preload-as-style with onload trick to avoid blocking render */}
         <link
+          rel="preload"
+          as="style"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-          rel="stylesheet"
+          onLoad={(e) => {
+            // convert the preload to a stylesheet once loaded
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(e.currentTarget as any).rel = 'stylesheet'
+          }}
         />
+        <noscript>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+            rel="stylesheet"
+          />
+        </noscript>
       </head>
       <body className="font-sans antialiased">
-        {children}
+        {/* Main landmark to satisfy accessibility Lighthouse check */}
+        <main id="content" className="min-h-screen">
+          {children}
+        </main>
         <Analytics />
       </body>
     </html>
