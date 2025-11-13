@@ -17,7 +17,7 @@ interface CreateQuotationRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: CreateQuotationRequest = await request.json()
-    const BACKEND = process.env.BACKEND_URL || 'http://localhost:4000'
+  const BACKEND = process.env.BACKEND_URL || 'https://jemo.codewithseth.co.ke'
 
     const res = await fetch(`${BACKEND}/api/quotations`, {
       method: 'POST',

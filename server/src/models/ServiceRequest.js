@@ -10,7 +10,6 @@ const ServiceRequestSchema = new mongoose.Schema({
   eventTime: { type: String },
   venue: { type: String },
   city: { type: String },
-  country: { type: String },
   attendees: { type: Number },
   selectedServices: { type: [String], default: [] },
   eventDescription: { type: String },

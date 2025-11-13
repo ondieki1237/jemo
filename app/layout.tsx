@@ -34,23 +34,11 @@ export default function RootLayout({
         {/* Preconnect + non-blocking font load for Google Fonts to reduce render blocking */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* Use preload-as-style with onload trick to avoid blocking render */}
+        {/* Load Google Fonts (preconnect + stylesheet). Avoid passing event handlers from a Server Component. */}
         <link
-          rel="preload"
-          as="style"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-          onLoad={(e) => {
-            // convert the preload to a stylesheet once loaded
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ;(e.currentTarget as any).rel = 'stylesheet'
-          }}
+          rel="stylesheet"
         />
-        <noscript>
-          <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-            rel="stylesheet"
-          />
-        </noscript>
       </head>
       <body className="font-sans antialiased">
         {/* Main landmark to satisfy accessibility Lighthouse check */}

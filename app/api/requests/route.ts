@@ -10,7 +10,6 @@ interface ServiceRequest {
   eventTime: string
   venue: string
   city: string
-  country: string
   attendees: number
   selectedServices: string[]
   eventDescription: string
@@ -22,8 +21,8 @@ export async function POST(request: NextRequest) {
   try {
     const body: ServiceRequest = await request.json()
 
-    // Forward request to external backend (Express + Mongo) if configured
-    const BACKEND = process.env.BACKEND_URL || 'http://localhost:4000'
+  // Forward request to external backend (Express + Mongo) if configured
+  const BACKEND = process.env.BACKEND_URL || 'https://jemo.codewithseth.co.ke'
 
     const res = await fetch(`${BACKEND}/api/requests`, {
       method: 'POST',
@@ -41,7 +40,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
-    const BACKEND = process.env.BACKEND_URL || 'http://localhost:4000'
+  const BACKEND = process.env.BACKEND_URL || 'https://jemo.codewithseth.co.ke'
     const res = await fetch(`${BACKEND}/api/requests`)
     const data = await res.json()
     return NextResponse.json(data, { status: res.status })

@@ -85,7 +85,7 @@ MPESA_WEBHOOK_SECRET=
 Frontend (create `.env.local` in root):
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
-BACKEND_URL=http://localhost:4000
+BACKEND_URL=https://jemo.codewithseth.co.ke
 ```
 
 5. **Start the development servers**
@@ -102,7 +102,7 @@ npm run dev
 ```
 
 Visit **http://localhost:3000** for the frontend
-Backend API runs on **http://localhost:4000**
+Backend API runs on **https://jemo.codewithseth.co.ke**
 
 ## 📧 Email Setup
 
@@ -239,7 +239,7 @@ jemo/
 
 Test service request submission:
 ```bash
-curl -X POST http://localhost:4000/api/requests \
+curl -X POST https://jemo.codewithseth.co.ke/api/requests \
   -H "Content-Type: application/json" \
   -d '{
     "firstName": "John",

@@ -123,7 +123,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/request-service"
-            className="inline-flex items-center justify-center px-8 py-4 neu-button bg-white text-primary font-semibold hover:scale-105 transition-all"
+            className="inline-flex items-center justify-center px-8 py-4 neu-button no-light bg-white text-primary font-semibold hover:scale-105 transition-all"
           >
             Get Started Today
             <ArrowRight className="ml-2 w-5 h-5" />

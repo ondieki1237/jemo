@@ -9,7 +9,7 @@ interface CreateInvoiceRequest {
 export async function POST(request: NextRequest) {
   try {
     const body: CreateInvoiceRequest = await request.json()
-    const BACKEND = process.env.BACKEND_URL || 'http://localhost:4000'
+    const BACKEND = process.env.BACKEND_URL || 'https://jemo.codewithseth.co.ke'
 
     const res = await fetch(`${BACKEND}/api/invoices`, {
       method: 'POST',
