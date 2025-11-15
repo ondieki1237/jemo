@@ -45,7 +45,7 @@ npm install  # Install dependencies (already done)
 npm run dev  # Start development server
 ```
 
-The server will start on: **http://localhost:4000**
+The server will start on: **https://jemo.codewithseth.co.ke**
 
 ## 📝 API Endpoints
 
@@ -69,7 +69,7 @@ The server will start on: **http://localhost:4000**
 
 ### Test Service Request:
 ```bash
-curl -X POST http://localhost:4000/api/requests \
+curl -X POST https://jemo.codewithseth.co.ke/api/requests \
   -H "Content-Type: application/json" \
   -d '{
     "firstName": "John",
@@ -143,5 +143,5 @@ When working correctly, you'll see:
 ✅ Confirmation email sent: <message-id>
 ✅ Admin notification sent: <message-id>
 Connected to MongoDB
-Backend listening on http://localhost:4000
+Backend listening on https://jemo.codewithseth.co.ke
 ```

@@ -18,7 +18,10 @@ dotenv.config()
 const app = express()
 app.use(morgan('dev'))
 app.use(express.json())
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN || 'http://localhost:3000' }))
+// Allow CORS from any origin. For production you may want to restrict this to
+// specific origins via FRONTEND_ORIGIN environment variable.
+app.use(cors())
+app.options('*', cors())
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/jemo_db'
 
