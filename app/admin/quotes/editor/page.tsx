@@ -172,9 +172,16 @@ export default function QuoteEditor() {
             <Save className="w-5 h-5" />
             Save Quote
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold hover:bg-secondary/5 transition-colors">
+          <button 
+            className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold hover:bg-secondary/5 transition-colors"
+            onClick={() => {
+              // This is a preview - in production, save the quote first and use the returned ID
+              const quoteId = "example-quote-id" // Replace with actual saved quote ID
+              window.open(`/api/quotations/${quoteId}/pdf`, '_blank')
+            }}
+          >
             <Download className="w-5 h-5" />
-            Preview PDF
+            Download PDF
           </button>
           <button className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold hover:bg-secondary/5 transition-colors">
             <Mail className="w-5 h-5" />

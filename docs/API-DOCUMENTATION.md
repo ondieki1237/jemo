@@ -27,6 +27,7 @@ Authorization: Bearer {token}
 - `POST /api/quotations` - Create quotation
 - `GET /api/quotations` - List quotations
 - `GET /api/quotations/:id` - Get quotation details
+- `GET /api/quotations/:id/pdf` - Download quotation as PDF
 - `PUT /api/quotations/:id` - Update quotation
 - `POST /api/quotations/:id/email` - Email quotation to client
 - `POST /api/quotations/:id/approve` - Client approves quote
