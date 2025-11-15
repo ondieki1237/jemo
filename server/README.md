@@ -56,6 +56,7 @@ The server will start on: **https://jemo.codewithseth.co.ke**
 ### Quotations
 - `POST /api/quotations` - Create quotation (sends email to client)
 - `GET /api/quotations` - List all quotations
+- `GET /api/quotations/:id/pdf` - Download quotation as PDF
 
 ### Invoices
 - `POST /api/invoices` - Create invoice (sends email to client)
