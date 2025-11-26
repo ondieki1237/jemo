@@ -11,8 +11,14 @@ export function Footer() {
           {/* Brand Column */}
           <div className="space-y-4 sm:col-span-2 md:col-span-1">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 neu-convex rounded-lg flex items-center justify-center">
-                <span className="font-serif text-lg font-bold text-accent">B</span>
+              <div className="relative w-9 h-9 neu-convex rounded-lg flex items-center justify-center overflow-hidden">
+                <Image
+                  src="/boom-logo-optimized.png"
+                  alt="Boom Audio Visuals"
+                  width={36}
+                  height={36}
+                  className="rounded-lg object-contain"
+                />
               </div>
               <span className="font-serif text-lg font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Boom Audio Visuals</span>
             </div>

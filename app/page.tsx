@@ -67,9 +67,10 @@ export default function HomePage() {
                       src={service.image || "/placeholder.svg"}
                       alt={service.title}
                       fill
-                      className={`object-cover transition-transform duration-700 ease-out ${
-                        hoveredService === service.id ? "scale-105 rotate-0" : "scale-100"
-                      }`}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      loading="lazy"
+                      className={`object-cover transition-transform duration-700 ease-out ${hoveredService === service.id ? "scale-105 rotate-0" : "scale-100"
+                        }`}
                     />
                     {/* subtle gradient overlay with blue tint */}
                     <div className="absolute inset-0 bg-gradient-to-t from-blue-900/30 to-transparent opacity-60 mix-blend-multiply" />
@@ -95,9 +96,8 @@ export default function HomePage() {
                       <span className="flex items-center gap-2">
                         Learn More
                         <ArrowRight
-                          className={`ml-1 w-4 h-4 transition-transform ${
-                            hoveredService === service.id ? "translate-x-2" : ""
-                          }`}
+                          className={`ml-1 w-4 h-4 transition-transform ${hoveredService === service.id ? "translate-x-2" : ""
+                            }`}
                         />
                       </span>
                     </Link>

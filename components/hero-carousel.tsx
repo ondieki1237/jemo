@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 
 const heroImages = [
-  "/luxury-african-event-stage-production-concert-fest.jpg",
-  "/luxury-event-planning-african-celebration.jpg",
-  "/professional-sound-system-concert-stage.jpg",
+  "/luxury-african-event-stage-production-concert-fest_optimized.webp",
+  "/luxury-event-planning-african-celebration_optimized.webp",
+  "/professional-sound-system-concert-stage_optimized.webp",
 ]
 
 export function HeroCarousel() {
@@ -34,14 +34,14 @@ export function HeroCarousel() {
         {heroImages.map((image, idx) => (
           <div
             key={idx}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              idx === activeImage ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${idx === activeImage ? "opacity-100" : "opacity-0"
+              }`}
           >
             <Image
               src={image || "/placeholder.svg"}
               alt={`Event showcase ${idx + 1}`}
               fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               priority={idx === 0}
             />
@@ -59,9 +59,8 @@ export function HeroCarousel() {
               setActiveImage(idx)
               setIsAutoplay(false)
             }}
-            className={`transition-all duration-300 ${
-              idx === activeImage ? "w-8 bg-accent" : "w-3 bg-white/50 hover:bg-white/70"
-            } h-2 rounded-full`}
+            className={`transition-all duration-300 ${idx === activeImage ? "w-8 bg-accent" : "w-3 bg-white/50 hover:bg-white/70"
+              } h-2 rounded-full`}
             aria-label={`Go to image ${idx + 1}`}
           />
         ))}

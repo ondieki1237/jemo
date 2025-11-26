@@ -11,15 +11,18 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
+        url: "/boom-icon-32.png",
+        sizes: "32x32",
+        type: "image/png",
       },
       {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
+        url: "/boom-icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/boom-icon-180.png",
+    shortcut: "/boom-icon-32.png",
   },
 }
 

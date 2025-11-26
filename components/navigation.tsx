@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
@@ -51,8 +52,15 @@ export function Navigation() {
       <div className="flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2" aria-label="Boom Audio Visuals Home">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg neu-convex relative">
-            <span className="font-serif text-lg font-bold text-accent">B</span>
+          <div className="relative flex h-9 w-9 items-center justify-center rounded-lg neu-convex overflow-hidden">
+            <Image
+              src="/boom-logo-optimized.png"
+              alt="Boom Audio Visuals"
+              width={36}
+              height={36}
+              className="rounded-lg object-contain"
+              priority
+            />
             {/* subtle yellow accent dot */}
             <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--yellow)] border border-white/10 hidden sm:block" aria-hidden="true" />
           </div>
@@ -128,8 +136,14 @@ export function Navigation() {
             >
               <div className="flex items-center justify-between mb-4">
                 <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg neu-convex relative">
-                    <span className="font-serif text-lg font-bold text-accent">B</span>
+                  <div className="relative flex h-9 w-9 items-center justify-center rounded-lg neu-convex overflow-hidden">
+                    <Image
+                      src="/boom-logo-optimized.png"
+                      alt="Boom Audio Visuals"
+                      width={36}
+                      height={36}
+                      className="rounded-lg object-contain"
+                    />
                   </div>
                   <span className="font-serif text-lg font-bold">Boom Audio Visuals</span>
                 </Link>
