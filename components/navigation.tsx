@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import { createPortal } from 'react-dom'
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -108,83 +109,88 @@ export function Navigation() {
       </div>
 
       {/* Mobile Menu – Off-canvas Side Drawer */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.18 }}
-              className="fixed inset-0 z-40 bg-black/40 md:hidden"
-              onClick={() => setIsOpen(false)}
-              aria-hidden={true}
-            />
+      {/* Render the mobile backdrop and drawer into document.body using a portal.
+          This ensures the fixed-position elements are positioned relative to the
+          viewport and not affected by any transforms or stacking contexts from
+          ancestor elements (keeps desktop view intact). */}
+      {typeof document !== 'undefined' && isOpen
+        ? createPortal(
+            <AnimatePresence>
+              {/* Backdrop */}
+              <motion.div
+                key="backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-md md:hidden"
+                onClick={() => setIsOpen(false)}
+                aria-hidden={true}
+              />
 
-            {/* Drawer */}
-            <motion.aside
-              key="drawer"
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 bg-background p-4 shadow-lg md:hidden"
-              role="dialog"
-              aria-label="Mobile menu"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
-                  <div className="relative flex h-9 w-9 items-center justify-center rounded-lg neu-convex overflow-hidden">
-                    <Image
-                      src="/boom-logo-optimized.png"
-                      alt="Boom Audio Visuals"
-                      width={36}
-                      height={36}
-                      className="rounded-lg object-contain"
-                    />
-                  </div>
-                  <span className="font-serif text-lg font-bold">Boom Audio Visuals</span>
-                </Link>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-lg p-2 text-foreground hover:bg-accent/10"
-                  aria-label="Close menu"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <nav className="space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
-                      pathname === link.href
-                        ? "bg-accent/10 text-accent"
-                        : "text-foreground hover:bg-accent/5 hover:text-accent"
-                    )}
-                  >
-                    {link.label}
+              {/* Drawer */}
+              <motion.aside
+                key="drawer"
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                className="fixed inset-y-0 left-0 z-50 w-72 bg-background p-4 shadow-lg md:hidden"
+                role="dialog"
+                aria-label="Mobile menu"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
+                    <div className="relative flex h-9 w-9 items-center justify-center rounded-lg neu-convex overflow-hidden">
+                      <Image
+                        src="/boom-logo-optimized.png"
+                        alt="Boom Audio Visuals"
+                        width={36}
+                        height={36}
+                        className="rounded-lg object-contain"
+                      />
+                    </div>
+                    <span className="font-serif text-lg font-bold">Boom Audio Visuals</span>
                   </Link>
-                ))}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="rounded-lg p-2 text-foreground hover:bg-accent/10"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
 
-                <Link
-                  href="/request-service"
-                  onClick={() => setIsOpen(false)}
-                  className="mt-3 block rounded-lg bg-accent px-4 py-2.5 text-center font-medium text-accent-foreground transition-colors hover:bg-accent/90"
-                >
-                  Request Service
-                </Link>
-              </nav>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+                <nav className="space-y-1">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        "block rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
+                        pathname === link.href
+                          ? "bg-accent/10 text-accent"
+                          : "text-foreground hover:bg-accent/5 hover:text-accent"
+                      )}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+
+                  <Link
+                    href="/request-service"
+                    onClick={() => setIsOpen(false)}
+                    className="mt-3 block rounded-lg bg-accent px-4 py-2.5 text-center font-medium text-accent-foreground transition-colors hover:bg-accent/90"
+                  >
+                    Request Service
+                  </Link>
+                </nav>
+              </motion.aside>
+            </AnimatePresence>,
+            document.body
+          )
+        : null}
     </motion.nav>
   );
 }

@@ -53,7 +53,8 @@ export default function AdminBlog() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch("/api/blog")
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      const res = await fetch(`${BACKEND_URL}/api/blog`)
       const data = await res.json()
       setPosts(data.posts || [])
       setLoading(false)
@@ -65,10 +66,10 @@ export default function AdminBlog() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
       setUploading(true)
-      
+
       let featuredImageUrl = formData.featuredImage
 
       // Upload image if a new file is selected
@@ -76,13 +77,14 @@ export default function AdminBlog() {
         const imageFormData = new FormData()
         imageFormData.append('image', imageFile)
 
-        const uploadRes = await fetch("/api/upload", {
+        const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+        const uploadRes = await fetch(`${BACKEND_URL}/api/upload`, {
           method: "POST",
           body: imageFormData,
         })
 
         const uploadData = await uploadRes.json()
-        
+
         if (uploadData.success) {
           featuredImageUrl = uploadData.imageUrl
         } else {
@@ -100,13 +102,14 @@ export default function AdminBlog() {
 
       if (editingPost) {
         // Update existing post
-        const res = await fetch("/api/blog", {
+        const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+        const res = await fetch(`${BACKEND_URL}/api/blog/${editingPost._id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingPost._id, ...postData }),
+          body: JSON.stringify(postData),
         })
         const data = await res.json()
-        
+
         if (data.success) {
           alert("Blog post updated successfully!")
           fetchPosts()
@@ -116,13 +119,14 @@ export default function AdminBlog() {
         }
       } else {
         // Create new post
-        const res = await fetch("/api/blog", {
+        const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+        const res = await fetch(`${BACKEND_URL}/api/blog`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(postData),
         })
         const data = await res.json()
-        
+
         if (data.success) {
           alert("Blog post created successfully!")
           fetchPosts()
@@ -143,11 +147,12 @@ export default function AdminBlog() {
     if (!confirm("Are you sure you want to delete this blog post?")) return
 
     try {
-      const res = await fetch(`/api/blog?id=${id}`, {
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      const res = await fetch(`${BACKEND_URL}/api/blog/${id}`, {
         method: "DELETE",
       })
       const data = await res.json()
-      
+
       if (data.success) {
         alert("Blog post deleted successfully!")
         fetchPosts()
@@ -213,7 +218,7 @@ export default function AdminBlog() {
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    
+
     const matchesCategory = filterCategory === "all" || post.category === filterCategory
     const matchesStatus =
       filterStatus === "all" ||

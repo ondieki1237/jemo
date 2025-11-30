@@ -66,9 +66,10 @@ export default function RequestServicePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     try {
-      const response = await fetch('/api/requests', {
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      const response = await fetch(`${BACKEND_URL}/api/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ export default function RequestServicePage() {
       })
 
       const data = await response.json()
-      
+
       if (response.ok && data.success) {
         alert("Request submitted successfully! We will contact you within 24 hours.")
         // Reset form
@@ -146,9 +147,8 @@ export default function RequestServicePage() {
               {[1, 2, 3, 4].map((s) => (
                 <div key={s} className="flex items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                      s <= step ? "bg-accent text-accent-foreground" : "bg-border text-foreground/50"
-                    }`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${s <= step ? "bg-accent text-accent-foreground" : "bg-border text-foreground/50"
+                      }`}
                   >
                     {s}
                   </div>
