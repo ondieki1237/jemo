@@ -74,11 +74,10 @@ export default function BlogPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  selectedCategory === cat
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedCategory === cat
                     ? "bg-accent text-accent-foreground"
                     : "bg-secondary/10 text-foreground hover:bg-secondary/20"
-                }`}
+                  }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
@@ -112,14 +111,13 @@ export default function BlogPage() {
                     onMouseLeave={() => setHoveredPost(null)}
                   >
                     <div className="relative h-48 rounded-lg overflow-hidden luxury-border bg-secondary/5">
-                      {post.featuredImage ? (
+                      {post.featuredImage && (post.featuredImage.startsWith('http://') || post.featuredImage.startsWith('https://')) ? (
                         <Image
                           src={post.featuredImage}
                           alt={post.title}
                           fill
-                          className={`object-cover transition-transform duration-500 ${
-                            hoveredPost === post._id ? "scale-105" : "scale-100"
-                          }`}
+                          className={`object-cover transition-transform duration-500 ${hoveredPost === post._id ? "scale-105" : "scale-100"
+                            }`}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-primary/20">
@@ -133,14 +131,13 @@ export default function BlogPage() {
 
                     <div className="flex-grow">
                       <h3
-                        className={`font-serif text-xl font-bold mb-2 transition-colors ${
-                          hoveredPost === post._id ? "text-accent" : "text-foreground"
-                        }`}
+                        className={`font-serif text-xl font-bold mb-2 transition-colors ${hoveredPost === post._id ? "text-accent" : "text-foreground"
+                          }`}
                       >
                         {post.title}
                       </h3>
                       <p className="text-foreground/60 text-sm mb-4">{post.excerpt}</p>
-                      
+
                       {post.tags && post.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2 mb-4">
                           {post.tags.slice(0, 3).map((tag, i) => (
@@ -174,9 +171,8 @@ export default function BlogPage() {
                         <div className="flex items-center text-accent font-semibold text-sm">
                           Read More{" "}
                           <ArrowRight
-                            className={`ml-2 w-4 h-4 transition-transform ${
-                              hoveredPost === post._id ? "translate-x-1" : ""
-                            }`}
+                            className={`ml-2 w-4 h-4 transition-transform ${hoveredPost === post._id ? "translate-x-1" : ""
+                              }`}
                           />
                         </div>
                         <span className="text-xs text-foreground/40">{post.views} views</span>

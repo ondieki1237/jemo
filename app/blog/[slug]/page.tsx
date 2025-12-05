@@ -64,7 +64,7 @@ export default async function BlogPostPage(props: { params: { slug: string } } |
               </div>
             </header>
 
-            {post.featuredImage && (
+            {post.featuredImage && (post.featuredImage.startsWith('http://') || post.featuredImage.startsWith('https://')) && (
               <div className="w-full h-80 relative rounded-lg overflow-hidden">
                 <Image src={post.featuredImage} alt={post.title} fill className="object-cover" />
               </div>

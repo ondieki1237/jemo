@@ -93,11 +93,10 @@ export default function EventsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  selectedCategory === cat
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${selectedCategory === cat
                     ? "bg-accent text-accent-foreground"
                     : "bg-secondary/10 text-foreground hover:bg-secondary/20"
-                }`}
+                  }`}
               >
                 {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
@@ -130,7 +129,7 @@ export default function EventsPage() {
                 >
                   {/* Image */}
                   <div className="relative h-64 lg:h-auto rounded-lg overflow-hidden luxury-border">
-                    {event.featuredImage ? (
+                    {event.featuredImage && (event.featuredImage.startsWith('http://') || event.featuredImage.startsWith('https://')) ? (
                       <Image src={event.featuredImage} alt={event.title} fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-primary/20">
