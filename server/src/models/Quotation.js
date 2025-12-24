@@ -7,7 +7,7 @@ const LineItemSchema = new mongoose.Schema({
 })
 
 const QuotationSchema = new mongoose.Schema({
-  requestId: String,
+  requestId: { type: String, index: true }, // Add index for better query performance
   clientName: String,
   clientEmail: String,
   eventDate: String,
