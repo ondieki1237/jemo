@@ -19,7 +19,8 @@ import {
   Calendar,
   ChevronRight,
   Home,
-  Search
+  Search,
+  FileSpreadsheet
 } from "lucide-react"
 import { useAuth } from "./admin-auth-guard"
 import { cn } from "@/lib/utils"
@@ -51,6 +52,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const menuItems = [
     { icon: BarChart3, label: "Dashboard", href: "/admin" },
     { icon: FileText, label: "Requests", href: "/admin/requests" },
+    { icon: FileSpreadsheet, label: "Quotations", href: "/admin/quotes" },
     { icon: DollarSign, label: "Invoices", href: "/admin/invoices" },
     { icon: Sparkles, label: "Services", href: "/admin/services" },
     { icon: Users, label: "Clients", href: "/admin/clients" },

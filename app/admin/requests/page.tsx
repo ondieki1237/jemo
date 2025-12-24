@@ -130,11 +130,11 @@ export default function AdminRequests() {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header + Actions as Card */}
-        <Card className="flex items-center justify-between">
-          <CardHeader>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
             <div>
-              <CardTitle className="font-serif text-2xl">Requests & Quotes</CardTitle>
-              <CardDescription>Manage service requests and quotations</CardDescription>
+              <CardTitle className="font-serif text-2xl">Service Requests</CardTitle>
+              <CardDescription>Manage and track service requests</CardDescription>
             </div>
             <div className="flex items-center gap-3">
               <Link href="/admin/requests/new">
@@ -213,7 +213,7 @@ export default function AdminRequests() {
                   <TableRow>
                     <TableCell colSpan={7} className="px-6 py-12 text-center text-foreground/60">
                       No requests found
-                    </TableCell>handleViewRequest(request
+                    </TableCell>
                   </TableRow>
                 ) : (
                   filtered.map((request) => (
@@ -248,7 +248,7 @@ export default function AdminRequests() {
                         </span>
                       </TableCell>
                       <TableCell className="px-6 py-4 space-x-2">
-                        <Button variant="ghost" size="sm" onClick={() => alert(`Request ID: ${request._id}\n\nFull details view coming soon!`)}>
+                        <Button variant="ghost" size="sm" onClick={() => handleViewRequest(request)}>
                           View
                         </Button>
                         {request.status === "pending" && (

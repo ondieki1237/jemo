@@ -117,102 +117,117 @@ router.get('/:id/pdf', async (req, res) => {
     const green = '#10b981'
 
     // === HEADER SECTION ===
-    // Company logo/name
-    doc.fontSize(28)
-       .fillColor(primaryBlue)
-       .font('Helvetica-Bold')
-       .text('BOOM', 50, 50, { continued: true })
-       .fillColor(accentBlue)
-       .text(' AUDIO VISUALS')
-    
-    // Tagline
-    doc.fontSize(10)
-       .fillColor(lightGray)
-       .font('Helvetica')
-       .text('Professional Audio-Visual Production', 50, 82)
+    // Company logo
+    try {
+      doc.image('public/boom-logo-optimized.png', 50, 40, { width: 100 })
+    } catch (err) {
+      // Fallback if logo not found
+      doc.fontSize(20)
+         .fillColor(primaryBlue)
+         .font('Helvetica-Bold')
+         .text('BOOM AUDIO VISUALS', 50, 50)
+    }
 
-    // Company details on right
-    const rightX = 400
+    // Company details on right with icons
+    const rightX = 360
     doc.fontSize(9)
        .fillColor(darkGray)
        .font('Helvetica')
-       .text('📞 +254 742 412650', rightX, 50)
-       .text('📧 boomaudiovisuals254@gmail.com', rightX, 65)
-       .text('📍 Kisumu, Kenya', rightX, 80)
-       .text('🌐 www.boomaudiovisuals.co.ke', rightX, 95)
+       .text('Phone:', rightX, 45)
+       .font('Helvetica-Bold')
+       .text('+254 742 412650', rightX + 40, 45)
+       
+    doc.font('Helvetica')
+       .text('Email:', rightX, 60)
+       .font('Helvetica-Bold')
+       .text('boomaudiovisuals254@gmail.com', rightX + 40, 60)
+       
+    doc.font('Helvetica')
+       .text('Location:', rightX, 75)
+       .font('Helvetica-Bold')
+       .text('Kisumu, Kenya', rightX + 40, 75)
+       
+    doc.font('Helvetica')
+       .text('Website:', rightX, 90)
+       .font('Helvetica-Bold')
+       .text('www.boomaudiovisuals.co.ke', rightX + 40, 90)
 
     // Horizontal line
-    doc.moveTo(50, 120)
-       .lineTo(545, 120)
+    doc.moveTo(50, 110)
+       .lineTo(545, 110)
        .strokeColor(accentBlue)
        .lineWidth(2)
        .stroke()
 
     // === INVOICE TITLE ===
-    doc.fontSize(24)
+    doc.fontSize(20)
        .fillColor(green)
        .font('Helvetica-Bold')
-       .text('INVOICE', 50, 140)
+       .text('INVOICE', 50, 125)
 
     // Invoice meta
-    doc.fontSize(10)
+    doc.fontSize(9)
        .fillColor(darkGray)
        .font('Helvetica')
-       .text(`Invoice No: INV-${id.slice(-8).toUpperCase()}`, 50, 175)
-       .text(`Date: ${new Date(invoice.createdAt).toLocaleDateString('en-GB')}`, 50, 190)
+       .text(`Invoice No: INV-${id.slice(-8).toUpperCase()}`, 50, 155)
+       .text(`Date: ${new Date(invoice.createdAt).toLocaleDateString('en-GB')}`, 50, 168)
     
     if (invoice.dueDate) {
-      doc.text(`Due Date: ${new Date(invoice.dueDate).toLocaleDateString('en-GB')}`, 50, 205)
+      doc.text(`Due Date: ${new Date(invoice.dueDate).toLocaleDateString('en-GB')}`, 50, 181)
     }
 
     // Payment status badge
     const statusColor = invoice.paymentStatus === 'paid' ? green : (invoice.paymentStatus === 'overdue' ? '#ef4444' : '#eab308')
-    doc.text(`Status: ${(invoice.paymentStatus || 'pending').toUpperCase()}`, 50, invoice.dueDate ? 220 : 205)
+    doc.text(`Status: ${(invoice.paymentStatus || 'pending').toUpperCase()}`, 50, invoice.dueDate ? 194 : 181)
        .fillColor(statusColor)
 
     // === CLIENT INFORMATION ===
-    doc.fontSize(12)
+    doc.fontSize(11)
        .fillColor(primaryBlue)
        .font('Helvetica-Bold')
-       .text('BILL TO:', 320, 175)
+       .text('BILL TO:', 320, 155)
 
-    doc.fontSize(10)
+    doc.fontSize(9)
        .fillColor(darkGray)
        .font('Helvetica-Bold')
-       .text(clientDetails.name, 320, 195)
+       .text(clientDetails.name, 320, 172)
        .font('Helvetica')
 
+    let clientY = 184
     if (clientDetails.company) {
-      doc.text(clientDetails.company, 320, 210)
+      doc.text(clientDetails.company, 320, clientY)
+      clientY += 12
     }
     if (clientDetails.email) {
-      doc.text(clientDetails.email, 320, clientDetails.company ? 225 : 210)
+      doc.text(clientDetails.email, 320, clientY)
+      clientY += 12
     }
     if (clientDetails.phone) {
-      doc.text(clientDetails.phone, 320, clientDetails.company ? 240 : 225)
+      doc.text(clientDetails.phone, 320, clientY)
+      clientY += 12
     }
 
     // Event details if available
     if (clientDetails.eventDate || clientDetails.venue) {
-      let eventY = clientDetails.company ? 260 : 245
+      clientY += 8
       doc.fontSize(10)
          .fillColor(primaryBlue)
          .font('Helvetica-Bold')
-         .text('EVENT DETAILS:', 320, eventY)
+         .text('EVENT DETAILS:', 320, clientY)
       
-      eventY += 15
-      doc.fillColor(darkGray).font('Helvetica')
+      clientY += 14
+      doc.fontSize(9).fillColor(darkGray).font('Helvetica')
       if (clientDetails.eventDate) {
-        doc.text(`Date: ${new Date(clientDetails.eventDate).toLocaleDateString('en-GB')}`, 320, eventY)
-        eventY += 15
+        doc.text(`Date: ${new Date(clientDetails.eventDate).toLocaleDateString('en-GB')}`, 320, clientY)
+        clientY += 12
       }
       if (clientDetails.venue) {
-        doc.text(`Venue: ${clientDetails.venue}`, 320, eventY, { width: 220 })
+        doc.text(`Venue: ${clientDetails.venue}`, 320, clientY, { width: 220 })
       }
     }
 
     // === LINE ITEMS TABLE (if available) ===
-    let tableTop = 320
+    let tableTop = 260
     
     if (lineItems.length > 0) {
       doc.fontSize(11)
@@ -231,10 +246,10 @@ router.get('/:id/pdf', async (req, res) => {
          .text('Amount', 460, tableTop + 8, { width: 75, align: 'right' })
 
       // Table rows
-      let yPos = tableTop + 35
+      let yPos = tableTop + 30
       
       doc.font('Helvetica')
-         .fontSize(10)
+         .fontSize(9)
 
       lineItems.forEach((item, index) => {
         const qty = item.quantity || 0
@@ -243,7 +258,7 @@ router.get('/:id/pdf', async (req, res) => {
 
         // Alternating row colors
         if (index % 2 === 0) {
-          doc.rect(50, yPos - 5, 495, 25).fillColor('#f8fafc').fill()
+          doc.rect(50, yPos - 4, 495, 22).fillColor('#f8fafc').fill()
         }
 
         doc.fillColor(darkGray)
@@ -252,10 +267,10 @@ router.get('/:id/pdf', async (req, res) => {
            .text(`KES ${unitPrice.toLocaleString('en-KE', { minimumFractionDigits: 2 })}`, 370, yPos, { width: 80, align: 'right' })
            .text(`KES ${lineTotal.toLocaleString('en-KE', { minimumFractionDigits: 2 })}`, 460, yPos, { width: 75, align: 'right' })
 
-        yPos += 30
+        yPos += 24
       })
 
-      tableTop = yPos + 20
+      tableTop = yPos + 15
     }
 
     // === TOTALS SECTION ===
@@ -277,52 +292,60 @@ router.get('/:id/pdf', async (req, res) => {
        .text(`KES ${(invoice.amount || 0).toLocaleString('en-KE', { minimumFractionDigits: 2 })}`, 460, tableTop, { width: 75, align: 'right' })
 
     // === PAYMENT INFORMATION ===
-    let paymentY = tableTop + 60
-    doc.fontSize(11)
+    let paymentY = tableTop + 40
+    doc.fontSize(10)
        .fillColor(primaryBlue)
        .font('Helvetica-Bold')
        .text('Payment Information:', 50, paymentY)
     
-    paymentY += 20
-    doc.fontSize(10)
+    paymentY += 16
+    doc.fontSize(9)
        .fillColor(darkGray)
        .font('Helvetica-Bold')
        .text('M-Pesa Paybill:', 50, paymentY)
        .font('Helvetica')
-       .text('Paybill: 123456', 50, paymentY + 15)
-       .text('Account: BOOM-' + id.slice(-8).toUpperCase(), 50, paymentY + 30)
+       .text('Paybill: 123456', 50, paymentY + 12)
+       .text('Account: BOOM-' + id.slice(-8).toUpperCase(), 50, paymentY + 24)
 
     doc.font('Helvetica-Bold')
-       .text('Bank Transfer:', 50, paymentY + 55)
+       .text('Bank Transfer:', 50, paymentY + 42)
        .font('Helvetica')
-       .text('Bank: Equity Bank', 50, paymentY + 70)
-       .text('Account: 0123456789', 50, paymentY + 85)
-       .text('Account Name: Boom Audio Visuals', 50, paymentY + 100)
+       .text('Bank: Equity Bank', 50, paymentY + 54)
+       .text('Account: 0123456789', 50, paymentY + 66)
+       .text('Account Name: Boom Audio Visuals', 50, paymentY + 78)
 
     // === FOOTER ===
-    const footerY = 720
-    doc.fontSize(10)
+    // Check if we need a new page
+    let footerY = paymentY + 110
+    if (footerY > 680) {
+      doc.addPage()
+      footerY = 50
+    } else {
+      footerY = Math.max(footerY, 680)
+    }
+    
+    doc.fontSize(9)
        .fillColor(primaryBlue)
        .font('Helvetica-Bold')
        .text('Terms & Conditions:', 50, footerY)
     
-    doc.fontSize(9)
+    doc.fontSize(8)
        .fillColor(darkGray)
        .font('Helvetica')
-       .text('• Payment is due within 7 days of invoice date', 50, footerY + 15)
-       .text('• Late payments may incur additional charges', 50, footerY + 30)
-       .text('• Please reference invoice number when making payment', 50, footerY + 45)
+       .text('• Payment is due within 7 days of invoice date', 50, footerY + 12)
+       .text('• Late payments may incur additional charges', 50, footerY + 24)
+       .text('• Please reference invoice number when making payment', 50, footerY + 36)
 
     // Bottom border
-    doc.moveTo(50, 795)
-       .lineTo(545, 795)
+    doc.moveTo(50, footerY + 55)
+       .lineTo(545, footerY + 55)
        .strokeColor(accentBlue)
        .lineWidth(1)
        .stroke()
 
-    doc.fontSize(8)
+    doc.fontSize(7)
        .fillColor(lightGray)
-       .text('Thank you for your business! - Boom Audio Visuals', 50, 805, { align: 'center', width: 495 })
+       .text('Thank you for your business! - Boom Audio Visuals', 50, footerY + 62, { align: 'center', width: 495 })
 
     doc.end()
   } catch (err) {
