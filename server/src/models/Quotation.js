@@ -8,13 +8,17 @@ const LineItemSchema = new mongoose.Schema({
 
 const QuotationSchema = new mongoose.Schema({
   requestId: String,
+  clientName: String,
   clientEmail: String,
+  eventDate: String,
+  venue: String,
   lineItems: [LineItemSchema],
   discount: { type: Number, default: 0 },
   notes: String,
   subtotal: Number,
   tax: Number,
   total: Number,
+  status: { type: String, default: 'draft' }, // draft, sent, approved, rejected, expired
   createdAt: { type: Date, default: () => new Date() },
 })
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Plus, Trash2, Mail, Download, Save } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface LineItem {
   id: string
@@ -11,12 +12,19 @@ interface LineItem {
 }
 
 export default function QuoteEditor() {
+  const router = useRouter()
   const [lineItems, setLineItems] = useState<LineItem[]>([
     { id: "1", description: "Event Planning Services", quantity: 1, unitPrice: 5000 },
   ])
 
+  const [clientName, setClientName] = useState("")
+  const [clientEmail, setClientEmail] = useState("")
+  const [eventDate, setEventDate] = useState("")
+  const [venue, setVenue] = useState("")
   const [discount, setDiscount] = useState(0)
   const [notes, setNotes] = useState("")
+  const [saving, setSaving] = useState(false)
+  const [savedQuoteId, setSavedQuoteId] = useState<string | null>(null)
 
   const subtotal = lineItems.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
   const tax = subtotal * 0.16
@@ -42,6 +50,82 @@ export default function QuoteEditor() {
     setLineItems(lineItems.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
   }
 
+  const handleSaveQuote = async () => {
+    if (!clientName || !clientEmail) {
+      alert("Please enter client name and email")
+      return
+    }
+
+    if (lineItems.length === 0 || lineItems.every(item => !item.description)) {
+      alert("Please add at least one service item")
+      return
+    }
+
+    setSaving(true)
+
+    try {
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      
+      const quotationData = {
+        clientName,
+        clientEmail,
+        eventDate,
+        venue,
+        lineItems: lineItems.map(item => ({
+          description: item.description,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice
+        })),
+        discount,
+        notes,
+        status: 'draft',
+        requestId: null // Optional: link to a service request if available
+      }
+
+      const response = await fetch(`${BACKEND_URL}/api/quotations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quotationData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setSavedQuoteId(data.quotationId)
+        alert(`Quotation saved successfully! Quote ID: ${data.quotationId.slice(-8)}`)
+        // Optionally redirect to quotations list
+        // router.push('/admin/quotes')
+      } else {
+        alert(`Error saving quotation: ${data.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error saving quotation:', error)
+      alert('Failed to save quotation. Please check your connection.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDownloadPDF = () => {
+    if (!savedQuoteId) {
+      alert("Please save the quotation first before downloading PDF")
+      return
+    }
+    const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+    window.open(`${BACKEND_URL}/api/quotations/${savedQuoteId}/pdf`, '_blank')
+  }
+
+  const handleSendToClient = async () => {
+    if (!savedQuoteId) {
+      alert("Please save the quotation first before sending to client")
+      return
+    }
+    // TODO: Implement email sending functionality
+    alert("Email sending functionality coming soon!")
+  }
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-4xl mx-auto bg-card border border-border rounded-lg p-8">
@@ -57,22 +141,32 @@ export default function QuoteEditor() {
           <div className="grid grid-cols-2 gap-4">
             <input
               type="text"
-              placeholder="Client Name"
+              placeholder="Client Name *"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
               className="px-4 py-2 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
+              required
             />
             <input
               type="email"
-              placeholder="Client Email"
+              placeholder="Client Email *"
+              value={clientEmail}
+              onChange={(e) => setClientEmail(e.target.value)}
               className="px-4 py-2 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
+              required
             />
             <input
-              type="text"
+              type="date"
               placeholder="Event Date"
+              value={eventDate}
+              onChange={(e) => setEventDate(e.target.value)}
               className="px-4 py-2 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
             />
             <input
               type="text"
               placeholder="Venue"
+              value={venue}
+              onChange={(e) => setVenue(e.target.value)}
               className="px-4 py-2 bg-background border border-border rounded text-foreground placeholder:text-foreground/50"
             />
           </div>
@@ -167,26 +261,36 @@ export default function QuoteEditor() {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-colors">
+        <div className="flex gap-3 flex-wrap">
+          <button 
+            onClick={handleSaveQuote}
+            disabled={saving}
+            className="flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground font-semibold rounded hover:bg-accent/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Save className="w-5 h-5" />
-            Save Quote
+            {saving ? 'Saving...' : 'Save Quote'}
           </button>
           <button 
-            className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold hover:bg-secondary/5 transition-colors"
-            onClick={() => {
-              // This is a preview - in production, save the quote first and use the returned ID
-              const quoteId = "example-quote-id" // Replace with actual saved quote ID
-              window.open(`/api/quotations/${quoteId}/pdf`, '_blank')
-            }}
+            onClick={handleDownloadPDF}
+            disabled={!savedQuoteId}
+            className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold rounded hover:bg-secondary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Download className="w-5 h-5" />
             Download PDF
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold hover:bg-secondary/5 transition-colors">
+          <button 
+            onClick={handleSendToClient}
+            disabled={!savedQuoteId}
+            className="flex items-center gap-2 px-6 py-3 border-2 border-border font-semibold rounded hover:bg-secondary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Mail className="w-5 h-5" />
             Send to Client
           </button>
+          {savedQuoteId && (
+            <div className="flex items-center gap-2 px-4 py-3 bg-green-100 text-green-800 rounded text-sm font-medium">
+              ✓ Saved - ID: {savedQuoteId.slice(-8)}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -26,7 +26,8 @@ export default function AdminInvoices() {
 
   const fetchInvoices = async () => {
     try {
-      const res = await fetch("/api/invoices")
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      const res = await fetch(`${BACKEND_URL}/api/invoices`)
       const data = await res.json()
       setInvoices(data.invoices || [])
       setLoading(false)
@@ -34,6 +35,11 @@ export default function AdminInvoices() {
       console.error("Error fetching invoices:", error)
       setLoading(false)
     }
+  }
+
+  const handleDownloadInvoicePDF = (invoiceId: string) => {
+    const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+    window.open(`${BACKEND_URL}/api/invoices/${invoiceId}/pdf`, '_blank')
   }
 
   const filtered = invoices.filter((inv) => {
@@ -175,6 +181,14 @@ export default function AdminInvoices() {
                         )}
                       </td>
                       <td className="px-6 py-4 space-x-2">
+                        <button
+                          onClick={() => handleDownloadInvoicePDF(invoice._id)}
+                          className="text-accent hover:text-accent/80 text-sm font-semibold inline-flex items-center gap-1"
+                        >
+                          <Download className="w-4 h-4" />
+                          PDF
+                        </button>
+                        <span className="text-foreground/30">•</span>
                         <button
                           onClick={() => alert(`Invoice details:\n${JSON.stringify(invoice, null, 2)}`)}
                           className="text-accent hover:text-accent/80 text-sm font-semibold"

@@ -22,6 +22,11 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu when pathname changes (including login/navigation)
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/services", label: "Services" },

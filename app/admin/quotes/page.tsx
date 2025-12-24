@@ -39,7 +39,8 @@ export default function AdminQuotations() {
 
   const fetchQuotations = async () => {
     try {
-      const res = await fetch("/api/quotations")
+      const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+      const res = await fetch(`${BACKEND_URL}/api/quotations`)
       const data = await res.json()
       setQuotations(data.quotations || [])
       setLoading(false)
@@ -50,7 +51,8 @@ export default function AdminQuotations() {
   }
 
   const handleDownloadPDF = (quotationId: string) => {
-    window.open(`/api/quotations/${quotationId}/pdf`, '_blank')
+    const BACKEND_URL = 'https://jemo.codewithseth.co.ke'
+    window.open(`${BACKEND_URL}/api/quotations/${quotationId}/pdf`, '_blank')
   }
 
   const filtered = quotations.filter((quote) => {
